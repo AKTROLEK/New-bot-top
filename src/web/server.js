@@ -107,17 +107,17 @@ app.get('/dashboard', checkAuth, limiter, (req, res) => {
 });
 
 app.get('/dashboard/support', checkAuth, limiter, (req, res) => {
-  const cases = database.all('SELECT * FROM support_cases ORDER BY created_at DESC LIMIT 50');
+  const cases = database.all('SELECT * FROM support_cases ORDER BY created_at DESC LIMIT 50') || [];
   res.render('dashboard/support', { user: req.user, cases });
 });
 
 app.get('/dashboard/verification', checkAuth, limiter, (req, res) => {
-  const queue = database.all('SELECT * FROM verification_queue WHERE status = "waiting"');
+  const queue = database.all('SELECT * FROM verification_queue WHERE status = "waiting"') || [];
   res.render('dashboard/verification', { user: req.user, queue });
 });
 
 app.get('/dashboard/streamers', checkAuth, limiter, (req, res) => {
-  const streamers = database.all('SELECT * FROM streamers ORDER BY performance_rating DESC');
+  const streamers = database.all('SELECT * FROM streamers ORDER BY performance_rating DESC') || [];
   res.render('dashboard/streamers', { user: req.user, streamers });
 });
 
@@ -132,7 +132,7 @@ app.get('/dashboard/analytics', checkAuth, limiter, (req, res) => {
 });
 
 app.get('/dashboard/security', checkAuth, limiter, (req, res) => {
-  const logs = database.all('SELECT * FROM security_logs ORDER BY created_at DESC LIMIT 100');
+  const logs = database.all('SELECT * FROM security_logs ORDER BY created_at DESC LIMIT 100') || [];
   res.render('dashboard/security', { user: req.user, logs });
 });
 
