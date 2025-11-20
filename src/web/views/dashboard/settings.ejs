@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الإعدادات | Settings</title>
+    <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+    <%- include('../partials/dashboard-sidebar') %>
+    
+    <main class="dashboard-main">
+        <%- include('../partials/dashboard-header') %>
+        
+        <div class="dashboard-content">
+            <h1>⚙️ إعدادات البوت</h1>
+            
+            <div class="settings-container glass-effect">
+                <h2>إعدادات عامة</h2>
+                <p>قريباً: واجهة كاملة لتخصيص جميع إعدادات البوت من لوحة التحكم</p>
+                
+                <div class="settings-grid">
+                    <div class="setting-item">
+                        <h3>🌐 اللغة</h3>
+                        <p>العربية (افتراضي)</p>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <h3>🕐 المنطقة الزمنية</h3>
+                        <p>Asia/Riyadh</p>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <h3>🛡️ الحماية</h3>
+                        <p>مفعّل</p>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <h3>🤖 الذكاء الاصطناعي</h3>
+                        <p>متوفر (اختياري)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/dashboard.js"></script>
+</body>
+</html>

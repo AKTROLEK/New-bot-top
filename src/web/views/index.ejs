@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام البوت المتقدم | Advanced Discord Bot</title>
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+    <div class="decorative-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+
+    <header class="hero">
+        <nav class="navbar">
+            <div class="container">
+                <div class="logo">
+                    <h2>🤖 نظام البوت المتقدم</h2>
+                </div>
+                <div class="nav-links">
+                    <% if (user) { %>
+                        <a href="/dashboard" class="btn btn-primary">لوحة التحكم</a>
+                        <a href="/auth/logout" class="btn btn-secondary">تسجيل الخروج</a>
+                    <% } else { %>
+                        <a href="/auth/discord" class="btn btn-primary">دخول لوحة التحكم</a>
+                    <% } %>
+                </div>
+            </div>
+        </nav>
+
+        <div class="hero-content">
+            <div class="container">
+                <h1 class="fade-in">✨ نظام بوت ديسكورد متقدم وشامل</h1>
+                <p class="hero-description fade-in delay-1">
+                    نظام كامل مدعوم بالذكاء الاصطناعي مع دعم تلقائي، تفعيل تلقائي، إدارة الستريمرز، والتحكم في السيرفر
+                </p>
+                <div class="hero-buttons fade-in delay-2">
+                    <a href="/auth/discord" class="btn btn-large btn-glow">دخول لوحة التحكم</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="features" id="features">
+        <div class="container">
+            <h2 class="section-title">🎯 المميزات الرئيسية</h2>
+            
+            <div class="features-grid">
+                <div class="feature-card glass-effect slide-in">
+                    <div class="feature-icon">📞</div>
+                    <h3>نظام الدعم التلقائي</h3>
+                    <p>نظام دعم كامل مع قوائم انتظار ذكية، توجيه تلقائي، وتتبع الأداء</p>
+                </div>
+
+                <div class="feature-card glass-effect slide-in delay-1">
+                    <div class="feature-icon">✅</div>
+                    <h3>نظام التفعيل التلقائي</h3>
+                    <p>تفعيل الأعضاء تلقائياً مع اختبارات متعددة المراحل ومنح الرتب</p>
+                </div>
+
+                <div class="feature-card glass-effect slide-in delay-2">
+                    <div class="feature-icon">🎬</div>
+                    <h3>إدارة الستريمرز</h3>
+                    <p>نظام كامل لإدارة الستريمرز مع متطلبات أسبوعية وتحليل الأداء</p>
+                </div>
+
+                <div class="feature-card glass-effect slide-in delay-3">
+                    <div class="feature-icon">💰</div>
+                    <h3>نظام المحفظة والكريدت</h3>
+                    <p>محفظة رقمية كاملة مع مكافآت، مهام، وسجل معاملات</p>
+                </div>
+
+                <div class="feature-card glass-effect slide-in delay-4">
+                    <div class="feature-icon">🤖</div>
+                    <h3>رد تلقائي بالذكاء الاصطناعي</h3>
+                    <p>رد تلقائي ذكي يفهم الفئات ويقلل عبء العمل بنسبة 70%</p>
+                </div>
+
+                <div class="feature-card glass-effect slide-in delay-5">
+                    <div class="feature-icon">🛡️</div>
+                    <h3>نظام حماية متقدم</h3>
+                    <p>حماية ضد السبام، الروابط، الغارات، والاختراقات مع وضع طوارئ</p>
+                </div>
+
+                <div class="feature-card glass-effect slide-in delay-6">
+                    <div class="feature-icon">📊</div>
+                    <h3>تحليلات الأداء</h3>
+                    <p>تتبع شامل للأداء مع تقارير يومية وشهرية وتصنيف الموظفين</p>
+                </div>
+
+                <div class="feature-card glass-effect slide-in delay-7">
+                    <div class="feature-icon">🖥️</div>
+                    <h3>لوحة تحكم متقدمة</h3>
+                    <p>لوحة تحكم ويب كاملة بالعربية مع تصميم أنيق ومميزات شاملة</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats" id="stats">
+        <div class="container">
+            <h2 class="section-title">📈 إحصائيات النظام</h2>
+            
+            <div class="stats-grid">
+                <div class="stat-card glass-effect">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">عربي بالكامل</div>
+                </div>
+                <div class="stat-card glass-effect">
+                    <div class="stat-number">15+</div>
+                    <div class="stat-label">أنظمة متكاملة</div>
+                </div>
+                <div class="stat-card glass-effect">
+                    <div class="stat-number">50+</div>
+                    <div class="stat-label">أوامر عربية</div>
+                </div>
+                <div class="stat-card glass-effect">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">عمل مستمر</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta">
+        <div class="container">
+            <div class="cta-content glass-effect">
+                <h2>🚀 جاهز للبدء؟</h2>
+                <p>ابدأ باستخدام النظام الأكثر تقدماً لإدارة سيرفر ديسكورد الخاص بك</p>
+                <a href="/auth/discord" class="btn btn-large btn-glow">دخول لوحة التحكم</a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>© 2024 نظام البوت المتقدم | جميع الحقوق محفوظة</p>
+            <p>نظام كامل للدعم التلقائي، التفعيل، إدارة الستريمرز، والمزيد</p>
+        </div>
+    </footer>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>

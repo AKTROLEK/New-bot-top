@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الحماية | Security</title>
+    <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+    <%- include('../partials/dashboard-sidebar') %>
+    
+    <main class="dashboard-main">
+        <%- include('../partials/dashboard-header') %>
+        
+        <div class="dashboard-content">
+            <h1>🛡️ نظام الحماية والسجلات</h1>
+            
+            <div class="table-container glass-effect">
+                <h2>سجلات الأمان الأخيرة</h2>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>المستخدم</th>
+                            <th>الإجراء</th>
+                            <th>السبب</th>
+                            <th>المسؤول</th>
+                            <th>التاريخ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% logs.forEach(log => { %>
+                        <tr>
+                            <td><%= log.user_id %></td>
+                            <td><%= log.action %></td>
+                            <td><%= log.reason || '-' %></td>
+                            <td><%= log.moderator_id || 'النظام' %></td>
+                            <td><%= new Date(log.created_at).toLocaleString('ar-SA') %></td>
+                        </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/dashboard.js"></script>
+</body>
+</html>

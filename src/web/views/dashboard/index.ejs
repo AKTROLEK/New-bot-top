@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم | Dashboard</title>
+    <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+    <%- include('../partials/dashboard-sidebar') %>
+    
+    <main class="dashboard-main">
+        <%- include('../partials/dashboard-header') %>
+        
+        <div class="dashboard-content">
+            <h1>🖥️ لوحة التحكم الرئيسية</h1>
+            
+            <div class="dashboard-grid">
+                <div class="dashboard-card glass-effect">
+                    <div class="card-icon">📞</div>
+                    <div class="card-content">
+                        <h3>نظام الدعم</h3>
+                        <p class="card-value" id="support-count">-</p>
+                        <p class="card-label">حالات نشطة</p>
+                        <a href="/dashboard/support" class="card-link">عرض التفاصيل →</a>
+                    </div>
+                </div>
+
+                <div class="dashboard-card glass-effect">
+                    <div class="card-icon">✅</div>
+                    <div class="card-content">
+                        <h3>نظام التفعيل</h3>
+                        <p class="card-value" id="verification-count">-</p>
+                        <p class="card-label">في قائمة الانتظار</p>
+                        <a href="/dashboard/verification" class="card-link">عرض التفاصيل →</a>
+                    </div>
+                </div>
+
+                <div class="dashboard-card glass-effect">
+                    <div class="card-icon">🎬</div>
+                    <div class="card-content">
+                        <h3>الستريمرز</h3>
+                        <p class="card-value" id="streamers-count">-</p>
+                        <p class="card-label">ستريمر نشط</p>
+                        <a href="/dashboard/streamers" class="card-link">عرض التفاصيل →</a>
+                    </div>
+                </div>
+
+                <div class="dashboard-card glass-effect">
+                    <div class="card-icon">💰</div>
+                    <div class="card-content">
+                        <h3>النظام المالي</h3>
+                        <p class="card-value" id="wallet-balance">-</p>
+                        <p class="card-label">إجمالي الرصيد</p>
+                        <a href="/dashboard/analytics" class="card-link">عرض التفاصيل →</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-section">
+                <h2>📊 نظرة سريعة</h2>
+                <div class="quick-stats glass-effect">
+                    <div class="quick-stat">
+                        <span class="stat-label">إجمالي حالات الدعم</span>
+                        <span class="stat-value" id="total-cases">-</span>
+                    </div>
+                    <div class="quick-stat">
+                        <span class="stat-label">الستريمرز المعتمدين</span>
+                        <span class="stat-value" id="approved-streamers">-</span>
+                    </div>
+                    <div class="quick-stat">
+                        <span class="stat-label">المستخدمين المسجلين</span>
+                        <span class="stat-value" id="total-users">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-section">
+                <h2>⚡ إجراءات سريعة</h2>
+                <div class="quick-actions">
+                    <a href="/dashboard/support" class="action-btn glass-effect">
+                        <span>📞</span>
+                        <span>إدارة الدعم</span>
+                    </a>
+                    <a href="/dashboard/verification" class="action-btn glass-effect">
+                        <span>✅</span>
+                        <span>إدارة التفعيل</span>
+                    </a>
+                    <a href="/dashboard/streamers" class="action-btn glass-effect">
+                        <span>🎬</span>
+                        <span>إدارة الستريمرز</span>
+                    </a>
+                    <a href="/dashboard/analytics" class="action-btn glass-effect">
+                        <span>📊</span>
+                        <span>التحليلات</span>
+                    </a>
+                    <a href="/dashboard/security" class="action-btn glass-effect">
+                        <span>🛡️</span>
+                        <span>الحماية</span>
+                    </a>
+                    <a href="/dashboard/settings" class="action-btn glass-effect">
+                        <span>⚙️</span>
+                        <span>الإعدادات</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/dashboard.js"></script>
+</body>
+</html>
