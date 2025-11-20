@@ -4,6 +4,7 @@ import passport from 'passport';
 import { Strategy as DiscordStrategy } from 'passport-discord';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import rateLimit from 'express-rate-limit';
 import config from '../config.js';
 import logger from '../utils/logger.js';
 import database from '../models/database.js';
@@ -11,22 +12,42 @@ import database from '../models/database.js';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
 
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+  message: 'تم تجاوز عدد الطلبات المسموح بها، يرجى المحاولة لاحقاً',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5, // Limit auth endpoints more strictly
+  message: 'تم تجاوز عدد محاولات تسجيل الدخول، يرجى المحاولة بعد 15 دقيقة',
+});
+
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(join(__dirname, 'public')));
+app.use(limiter); // Apply rate limiting globally
 
 // View engine
 app.set('view engine', 'ejs');
 app.set('views', join(__dirname, 'views'));
 
 // Session
+const isProduction = process.env.NODE_ENV === 'production';
 app.use(session({
   secret: config.web.sessionSecret,
   resave: false,
   saveUninitialized: false,
   cookie: {
     maxAge: 86400000, // 24 hours
+    secure: isProduction, // Require HTTPS in production
+    httpOnly: true, // Prevent XSS attacks
+    sameSite: 'lax', // CSRF protection
   },
 }));
 
@@ -65,9 +86,9 @@ app.get('/', (req, res) => {
   res.render('index', { user: req.user });
 });
 
-app.get('/auth/discord', passport.authenticate('discord'));
+app.get('/auth/discord', authLimiter, passport.authenticate('discord'));
 
-app.get('/auth/callback',
+app.get('/auth/callback', authLimiter,
   passport.authenticate('discord', { failureRedirect: '/' }),
   (req, res) => {
     res.redirect('/dashboard');
@@ -81,26 +102,26 @@ app.get('/auth/logout', (req, res) => {
 });
 
 // Dashboard routes
-app.get('/dashboard', checkAuth, (req, res) => {
+app.get('/dashboard', checkAuth, limiter, (req, res) => {
   res.render('dashboard/index', { user: req.user });
 });
 
-app.get('/dashboard/support', checkAuth, (req, res) => {
+app.get('/dashboard/support', checkAuth, limiter, (req, res) => {
   const cases = database.all('SELECT * FROM support_cases ORDER BY created_at DESC LIMIT 50');
   res.render('dashboard/support', { user: req.user, cases });
 });
 
-app.get('/dashboard/verification', checkAuth, (req, res) => {
+app.get('/dashboard/verification', checkAuth, limiter, (req, res) => {
   const queue = database.all('SELECT * FROM verification_queue WHERE status = "waiting"');
   res.render('dashboard/verification', { user: req.user, queue });
 });
 
-app.get('/dashboard/streamers', checkAuth, (req, res) => {
+app.get('/dashboard/streamers', checkAuth, limiter, (req, res) => {
   const streamers = database.all('SELECT * FROM streamers ORDER BY performance_rating DESC');
   res.render('dashboard/streamers', { user: req.user, streamers });
 });
 
-app.get('/dashboard/analytics', checkAuth, (req, res) => {
+app.get('/dashboard/analytics', checkAuth, limiter, (req, res) => {
   const stats = {
     totalCases: database.get('SELECT COUNT(*) as count FROM support_cases')?.count || 0,
     activeCases: database.get('SELECT COUNT(*) as count FROM support_cases WHERE status = "open"')?.count || 0,
@@ -110,17 +131,17 @@ app.get('/dashboard/analytics', checkAuth, (req, res) => {
   res.render('dashboard/analytics', { user: req.user, stats });
 });
 
-app.get('/dashboard/security', checkAuth, (req, res) => {
+app.get('/dashboard/security', checkAuth, limiter, (req, res) => {
   const logs = database.all('SELECT * FROM security_logs ORDER BY created_at DESC LIMIT 100');
   res.render('dashboard/security', { user: req.user, logs });
 });
 
-app.get('/dashboard/settings', checkAuth, (req, res) => {
+app.get('/dashboard/settings', checkAuth, limiter, (req, res) => {
   res.render('dashboard/settings', { user: req.user });
 });
 
 // API Routes
-app.get('/api/stats', checkAuth, (req, res) => {
+app.get('/api/stats', checkAuth, limiter, (req, res) => {
   const stats = {
     support: {
       total: database.get('SELECT COUNT(*) as count FROM support_cases')?.count || 0,
