@@ -173,8 +173,13 @@ async function start() {
     // Connect to database first
     await database.connect();
     
-    app.listen(config.web.port, () => {
+    // Use PORT environment variable (for Railway/Heroku/etc) or fallback to config
+    const port = process.env.PORT || config.web.port;
+    const host = process.env.HOST || '0.0.0.0';
+    
+    app.listen(port, host, () => {
       logger.info(`🌐 Web dashboard running on ${config.web.url}`);
+      logger.info(`📡 Server listening on ${host}:${port}`);
     });
   } catch (error) {
     logger.error('Failed to start web server:', error);

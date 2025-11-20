@@ -258,6 +258,30 @@ pm2 save
 
 قريباً: سيتم إضافة `Dockerfile` و `docker-compose.yml`
 
+### النشر على Railway
+
+<div dir="rtl">
+
+1. قم بإنشاء مشروع جديد على [Railway](https://railway.app)
+2. اربط مستودع GitHub الخاص بك
+3. أضف متغيرات البيئة التالية:
+   - `DISCORD_TOKEN`
+   - `DISCORD_CLIENT_ID`
+   - `DISCORD_CLIENT_SECRET`
+   - `DISCORD_GUILD_ID`
+   - `WEB_URL` - يجب أن يطابق رابط الخدمة (مثل: `https://your-app.up.railway.app`)
+   - `SESSION_SECRET`
+4. Railway سيوفر متغير `PORT` تلقائياً - الخادم سيستخدمه
+5. اختر `npm run web` كأمر البدء لتشغيل لوحة التحكم
+6. أو استخدم `npm start` لتشغيل البوت فقط
+
+⚠️ **ملاحظة مهمة للـ Railway:**
+- تأكد أن `WEB_URL` يطابق رابط الخدمة بالضبط
+- الخادم سيستمع تلقائياً على المنفذ الذي يوفره Railway
+- تأكد من إضافة رابط callback في إعدادات OAuth2: `https://your-app.up.railway.app/auth/callback`
+
+</div>
+
 ### متغيرات البيئة للإنتاج
 
 تأكد من تغيير:
@@ -265,6 +289,7 @@ pm2 save
 - `SESSION_SECRET` إلى قيمة قوية
 - تفعيل HTTPS
 - استخدام قاعدة بيانات أكثر قوة (PostgreSQL/MySQL) إذا لزم الأمر
+- على Railway/Heroku: متغير `PORT` يُوفر تلقائياً من المنصة
 
 ## Updates | التحديثات
 
