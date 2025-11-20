@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام التفعيل | Verification System</title>
+    <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+    <%- include('../partials/dashboard-sidebar') %>
+    
+    <main class="dashboard-main">
+        <%- include('../partials/dashboard-header') %>
+        
+        <div class="dashboard-content">
+            <h1>✅ نظام التفعيل</h1>
+            
+            <div class="stats-row">
+                <div class="stat-box glass-effect">
+                    <h3>في الانتظار</h3>
+                    <p class="stat-number"><%= queue.length %></p>
+                </div>
+            </div>
+
+            <div class="table-container glass-effect">
+                <h2>قائمة الانتظار</h2>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>المستخدم</th>
+                            <th>غرفة الانتظار</th>
+                            <th>وقت الانضمام</th>
+                            <th>الحالة</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% queue.forEach(item => { %>
+                        <tr>
+                            <td><%= item.user_id %></td>
+                            <td><%= item.waiting_room_id %></td>
+                            <td><%= new Date(item.joined_at).toLocaleString('ar-SA') %></td>
+                            <td>
+                                <span class="status-badge waiting">
+                                    ⏳ <%= item.status %>
+                                </span>
+                            </td>
+                        </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/dashboard.js"></script>
+</body>
+</html>

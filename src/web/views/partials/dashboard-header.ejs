@@ -1,0 +1,15 @@
+<header class="dashboard-header">
+    <div class="header-left">
+        <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+        <h1 class="page-title">لوحة التحكم</h1>
+    </div>
+    
+    <div class="header-right">
+        <div class="user-info">
+            <% if (user) { %>
+                <img src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png" alt="User Avatar" class="user-avatar">
+                <span class="user-name"><%= user.username %></span>
+            <% } %>
+        </div>
+    </div>
+</header>

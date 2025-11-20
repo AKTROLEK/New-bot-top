@@ -1,0 +1,13 @@
+{
+  "general": {
+    "error": "❌ An error occurred",
+    "success": "✅ Success",
+    "loading": "⏳ Loading...",
+    "no_permission": "❌ You don't have permission to use this command",
+    "invalid_input": "❌ Invalid input",
+    "not_found": "❌ Not found",
+    "already_exists": "❌ Already exists",
+    "canceled": "❌ Canceled",
+    "timeout": "⏱️ Timeout"
+  }
+}

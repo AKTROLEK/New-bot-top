@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة الدعم | Support Management</title>
+    <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+    <%- include('../partials/dashboard-sidebar') %>
+    
+    <main class="dashboard-main">
+        <%- include('../partials/dashboard-header') %>
+        
+        <div class="dashboard-content">
+            <h1>📞 إدارة نظام الدعم</h1>
+            
+            <div class="stats-row">
+                <div class="stat-box glass-effect">
+                    <h3>حالات نشطة</h3>
+                    <p class="stat-number"><%= cases.filter(c => c.status === 'open').length %></p>
+                </div>
+                <div class="stat-box glass-effect">
+                    <h3>إجمالي الحالات</h3>
+                    <p class="stat-number"><%= cases.length %></p>
+                </div>
+                <div class="stat-box glass-effect">
+                    <h3>حالات مغلقة</h3>
+                    <p class="stat-number"><%= cases.filter(c => c.status === 'closed').length %></p>
+                </div>
+            </div>
+
+            <div class="table-container glass-effect">
+                <h2>حالات الدعم الحديثة</h2>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>رقم الحالة</th>
+                            <th>المستخدم</th>
+                            <th>الفئة</th>
+                            <th>الحالة</th>
+                            <th>التاريخ</th>
+                            <th>التقييم</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% cases.forEach(supportCase => { %>
+                        <tr>
+                            <td><%= supportCase.case_id %></td>
+                            <td><%= supportCase.user_id %></td>
+                            <td><%= supportCase.category || '-' %></td>
+                            <td>
+                                <span class="status-badge <%= supportCase.status %>">
+                                    <%= supportCase.status === 'open' ? '🟢 مفتوح' : '🔴 مغلق' %>
+                                </span>
+                            </td>
+                            <td><%= new Date(supportCase.created_at).toLocaleDateString('ar-SA') %></td>
+                            <td><%= supportCase.rating ? '⭐'.repeat(supportCase.rating) : '-' %></td>
+                        </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/dashboard.js"></script>
+</body>
+</html>
