@@ -14,6 +14,12 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 // Store bot client reference
 let botClient = null;
 
+// Helper function to check if bot is online
+function isBotOnline() {
+  // WebSocket status 0 = READY (connected and ready)
+  return botClient && botClient.ws.status === 0;
+}
+
 const app = express();
 
 // Rate limiting
@@ -168,7 +174,7 @@ app.get('/api/stats', checkAuth, limiter, (req, res) => {
         totalBalance: database.get('SELECT SUM(balance) as total FROM wallets')?.total || 0,
       },
       bot: botClient ? {
-        status: botClient.ws.status === 0 ? 'online' : 'offline',
+        status: isBotOnline() ? 'online' : 'offline',
         uptime: botClient.uptime ? Math.floor(botClient.uptime / 1000) : 0,
         guilds: botClient.guilds.cache.size,
         users: botClient.users.cache.size,
@@ -192,7 +198,7 @@ app.get('/api/bot/info', checkAuth, limiter, (req, res) => {
     const guild = botClient.guilds.cache.get(config.discord.guildId);
     
     res.json({
-      status: botClient.ws.status === 0 ? 'online' : 'offline',
+      status: isBotOnline() ? 'online' : 'offline',
       uptime: botClient.uptime ? Math.floor(botClient.uptime / 1000) : 0,
       guilds: botClient.guilds.cache.size,
       users: botClient.users.cache.size,

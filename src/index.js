@@ -32,6 +32,9 @@ const client = new Client({
 client.commands = new Collection();
 client.events = new Collection();
 
+// Store web server reference
+let webServer = null;
+
 // Startup function
 async function startup() {
   try {
@@ -123,9 +126,6 @@ process.on('uncaughtException', error => {
   logger.error('Uncaught exception:', error);
   process.exit(1);
 });
-
-// Store web server reference
-let webServer = null;
 
 // Graceful shutdown
 process.on('SIGINT', async () => {
