@@ -48,23 +48,37 @@ async function startup() {
     await database.connect();
     logger.info('✅ Database connected');
 
-    // Load event handlers
-    await loadEvents();
-    logger.info('✅ Events loaded');
-
-    // Load command handlers
-    await loadCommands();
-    logger.info('✅ Commands loaded');
-
-    // Login to Discord
-    await client.login(config.discord.token);
-    logger.info('✅ Bot logged in successfully');
-
-    // Start web dashboard after bot is ready
+    // Start web dashboard first (so it's available even if bot fails)
     await startWebDashboard();
 
+    // Try to start the bot (but don't fail if it can't connect)
+    try {
+      // Load event handlers
+      await loadEvents();
+      logger.info('✅ Events loaded');
+
+      // Load command handlers
+      await loadCommands();
+      logger.info('✅ Commands loaded');
+
+      // Login to Discord
+      if (config.discord.token && config.discord.token !== 'test_token_placeholder') {
+        await client.login(config.discord.token);
+        logger.info('✅ Bot logged in successfully');
+        
+        // Update web dashboard with bot client after successful login
+        await updateWebDashboardClient();
+      } else {
+        logger.warn('⚠️ No valid Discord token provided - bot will not connect');
+        logger.info('💡 Web dashboard is still available');
+      }
+    } catch (botError) {
+      logger.error('❌ Bot failed to start:', botError);
+      logger.info('💡 Web dashboard is still running without bot connection');
+    }
+
   } catch (error) {
-    logger.error('❌ Error during startup:', error);
+    logger.error('❌ Critical error during startup:', error);
     process.exit(1);
   }
 }
@@ -73,11 +87,25 @@ async function startup() {
 async function startWebDashboard() {
   try {
     const { start } = await import('./web/server.js');
-    webServer = await start(client);
+    // Start without client initially - will be updated after bot login
+    webServer = await start(null);
     logger.info('✅ Web dashboard started successfully');
   } catch (error) {
     logger.error('❌ Error starting web dashboard:', error);
-    logger.info('Bot will continue running without web dashboard');
+    throw error; // Web dashboard is critical, so throw error
+  }
+}
+
+// Update web dashboard with bot client
+async function updateWebDashboardClient() {
+  try {
+    const { updateClient } = await import('./web/server.js');
+    if (updateClient) {
+      updateClient(client);
+      logger.info('✅ Bot connected to web dashboard');
+    }
+  } catch (error) {
+    logger.warn('⚠️ Could not update web dashboard with bot client:', error);
   }
 }
 

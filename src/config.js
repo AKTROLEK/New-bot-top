@@ -12,7 +12,8 @@ export default {
 
   // Web Dashboard Configuration
   web: {
-    port: process.env.WEB_PORT || 3000,
+    port: process.env.PORT || process.env.WEB_PORT || 3000,
+    host: process.env.HOST || '0.0.0.0',
     url: process.env.WEB_URL || 'http://localhost:3000',
     sessionSecret: process.env.SESSION_SECRET || 'change-this-secret',
   },

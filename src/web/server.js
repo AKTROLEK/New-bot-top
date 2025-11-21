@@ -235,8 +235,8 @@ async function start(client = null) {
       await database.connect();
     }
     
-    app.listen(config.web.port, () => {
-      logger.info(`🌐 Web dashboard running on ${config.web.url}`);
+    app.listen(config.web.port, config.web.host, () => {
+      logger.info(`🌐 Web dashboard running on ${config.web.host}:${config.web.port}`);
     });
     
     return app;
@@ -254,6 +254,12 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   });
 }
 
+// Function to update bot client after initial startup
+function updateClient(client) {
+  botClient = client;
+  logger.info('Bot client updated in web dashboard');
+}
+
 // Export the start function and app
-export { start, botClient };
+export { start, updateClient, botClient };
 export default app;
