@@ -237,6 +237,7 @@ async function start(client = null) {
     
     app.listen(config.web.port, config.web.host, () => {
       logger.info(`🌐 Web dashboard running on ${config.web.host}:${config.web.port}`);
+      logger.info(`🔗 Access dashboard at: ${config.web.url}`);
     });
     
     return app;

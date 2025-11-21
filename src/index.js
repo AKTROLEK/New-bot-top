@@ -35,6 +35,9 @@ client.events = new Collection();
 // Store web server reference
 let webServer = null;
 
+// Constants
+const PLACEHOLDER_TOKEN = 'test_token_placeholder';
+
 // Startup function
 async function startup() {
   try {
@@ -62,7 +65,7 @@ async function startup() {
       logger.info('✅ Commands loaded');
 
       // Login to Discord
-      if (config.discord.token && config.discord.token !== 'test_token_placeholder') {
+      if (config.discord.token && config.discord.token !== PLACEHOLDER_TOKEN) {
         await client.login(config.discord.token);
         logger.info('✅ Bot logged in successfully');
         
