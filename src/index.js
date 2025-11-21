@@ -32,6 +32,9 @@ const client = new Client({
 client.commands = new Collection();
 client.events = new Collection();
 
+// Store web server reference
+let webServer = null;
+
 // Startup function
 async function startup() {
   try {
@@ -57,9 +60,24 @@ async function startup() {
     await client.login(config.discord.token);
     logger.info('✅ Bot logged in successfully');
 
+    // Start web dashboard after bot is ready
+    await startWebDashboard();
+
   } catch (error) {
     logger.error('❌ Error during startup:', error);
     process.exit(1);
+  }
+}
+
+// Start web dashboard
+async function startWebDashboard() {
+  try {
+    const { start } = await import('./web/server.js');
+    webServer = await start(client);
+    logger.info('✅ Web dashboard started successfully');
+  } catch (error) {
+    logger.error('❌ Error starting web dashboard:', error);
+    logger.info('Bot will continue running without web dashboard');
   }
 }
 
@@ -112,6 +130,9 @@ process.on('uncaughtException', error => {
 // Graceful shutdown
 process.on('SIGINT', async () => {
   logger.info('Shutting down...');
+  if (webServer) {
+    webServer.close();
+  }
   client.destroy();
   database.close();
   process.exit(0);
@@ -119,6 +140,9 @@ process.on('SIGINT', async () => {
 
 process.on('SIGTERM', async () => {
   logger.info('Shutting down...');
+  if (webServer) {
+    webServer.close();
+  }
   client.destroy();
   database.close();
   process.exit(0);

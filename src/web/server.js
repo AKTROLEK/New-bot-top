@@ -10,6 +10,16 @@ import logger from '../utils/logger.js';
 import database from '../models/database.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+
+// Store bot client reference
+let botClient = null;
+
+// Helper function to check if bot is online
+function isBotOnline() {
+  // WebSocket status 0 = READY (connected and ready)
+  return botClient && botClient.ws.status === 0;
+}
+
 const app = express();
 
 // Rate limiting
@@ -61,14 +71,19 @@ passport.deserializeUser((id, done) => {
   done(null, { id });
 });
 
-passport.use(new DiscordStrategy({
-  clientID: config.discord.clientId,
-  clientSecret: config.discord.clientSecret,
-  callbackURL: `${config.web.url}/auth/callback`,
-  scope: ['identify', 'guilds'],
-}, (accessToken, refreshToken, profile, done) => {
-  return done(null, profile);
-}));
+// Only setup Discord OAuth if credentials are provided
+if (config.discord.clientId && config.discord.clientSecret) {
+  passport.use(new DiscordStrategy({
+    clientID: config.discord.clientId,
+    clientSecret: config.discord.clientSecret,
+    callbackURL: `${config.web.url}/auth/callback`,
+    scope: ['identify', 'guilds'],
+  }, (accessToken, refreshToken, profile, done) => {
+    return done(null, profile);
+  }));
+} else {
+  logger.warn('⚠️ Discord OAuth not configured - authentication will not work');
+}
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -107,17 +122,17 @@ app.get('/dashboard', checkAuth, limiter, (req, res) => {
 });
 
 app.get('/dashboard/support', checkAuth, limiter, (req, res) => {
-  const cases = database.all('SELECT * FROM support_cases ORDER BY created_at DESC LIMIT 50');
+  const cases = database.all('SELECT * FROM support_cases ORDER BY created_at DESC LIMIT 50') || [];
   res.render('dashboard/support', { user: req.user, cases });
 });
 
 app.get('/dashboard/verification', checkAuth, limiter, (req, res) => {
-  const queue = database.all('SELECT * FROM verification_queue WHERE status = "waiting"');
+  const queue = database.all('SELECT * FROM verification_queue WHERE status = "waiting"') || [];
   res.render('dashboard/verification', { user: req.user, queue });
 });
 
 app.get('/dashboard/streamers', checkAuth, limiter, (req, res) => {
-  const streamers = database.all('SELECT * FROM streamers ORDER BY performance_rating DESC');
+  const streamers = database.all('SELECT * FROM streamers ORDER BY performance_rating DESC') || [];
   res.render('dashboard/streamers', { user: req.user, streamers });
 });
 
@@ -132,7 +147,7 @@ app.get('/dashboard/analytics', checkAuth, limiter, (req, res) => {
 });
 
 app.get('/dashboard/security', checkAuth, limiter, (req, res) => {
-  const logs = database.all('SELECT * FROM security_logs ORDER BY created_at DESC LIMIT 100');
+  const logs = database.all('SELECT * FROM security_logs ORDER BY created_at DESC LIMIT 100') || [];
   res.render('dashboard/security', { user: req.user, logs });
 });
 
@@ -142,23 +157,64 @@ app.get('/dashboard/settings', checkAuth, limiter, (req, res) => {
 
 // API Routes
 app.get('/api/stats', checkAuth, limiter, (req, res) => {
-  const stats = {
-    support: {
-      total: database.get('SELECT COUNT(*) as count FROM support_cases')?.count || 0,
-      open: database.get('SELECT COUNT(*) as count FROM support_cases WHERE status = "open"')?.count || 0,
-      closed: database.get('SELECT COUNT(*) as count FROM support_cases WHERE status = "closed"')?.count || 0,
-    },
-    streamers: {
-      total: database.get('SELECT COUNT(*) as count FROM streamers')?.count || 0,
-      approved: database.get('SELECT COUNT(*) as count FROM streamers WHERE status = "approved"')?.count || 0,
-      pending: database.get('SELECT COUNT(*) as count FROM streamers WHERE status = "pending"')?.count || 0,
-    },
-    wallet: {
-      totalUsers: database.get('SELECT COUNT(*) as count FROM wallets')?.count || 0,
-      totalBalance: database.get('SELECT SUM(balance) as total FROM wallets')?.total || 0,
-    },
-  };
-  res.json(stats);
+  try {
+    const stats = {
+      support: {
+        total: database.get('SELECT COUNT(*) as count FROM support_cases')?.count || 0,
+        open: database.get('SELECT COUNT(*) as count FROM support_cases WHERE status = "open"')?.count || 0,
+        closed: database.get('SELECT COUNT(*) as count FROM support_cases WHERE status = "closed"')?.count || 0,
+      },
+      streamers: {
+        total: database.get('SELECT COUNT(*) as count FROM streamers')?.count || 0,
+        approved: database.get('SELECT COUNT(*) as count FROM streamers WHERE status = "approved"')?.count || 0,
+        pending: database.get('SELECT COUNT(*) as count FROM streamers WHERE status = "pending"')?.count || 0,
+      },
+      wallet: {
+        totalUsers: database.get('SELECT COUNT(*) as count FROM wallets')?.count || 0,
+        totalBalance: database.get('SELECT SUM(balance) as total FROM wallets')?.total || 0,
+      },
+      bot: botClient ? {
+        status: isBotOnline() ? 'online' : 'offline',
+        uptime: botClient.uptime ? Math.floor(botClient.uptime / 1000) : 0,
+        guilds: botClient.guilds.cache.size,
+        users: botClient.users.cache.size,
+        ping: botClient.ws.ping,
+      } : null,
+    };
+    res.json(stats);
+  } catch (error) {
+    logger.error('Error fetching stats:', error);
+    res.status(500).json({ error: 'Failed to fetch stats' });
+  }
+});
+
+// New API endpoint for bot information
+app.get('/api/bot/info', checkAuth, limiter, (req, res) => {
+  try {
+    if (!botClient) {
+      return res.status(503).json({ error: 'Bot is not connected' });
+    }
+
+    const guild = botClient.guilds.cache.get(config.discord.guildId);
+    
+    res.json({
+      status: isBotOnline() ? 'online' : 'offline',
+      uptime: botClient.uptime ? Math.floor(botClient.uptime / 1000) : 0,
+      guilds: botClient.guilds.cache.size,
+      users: botClient.users.cache.size,
+      ping: botClient.ws.ping,
+      username: botClient.user?.username,
+      avatar: botClient.user?.displayAvatarURL(),
+      guild: guild ? {
+        name: guild.name,
+        memberCount: guild.memberCount,
+        icon: guild.iconURL(),
+      } : null,
+    });
+  } catch (error) {
+    logger.error('Error fetching bot info:', error);
+    res.status(500).json({ error: 'Failed to fetch bot information' });
+  }
 });
 
 // Error handler
@@ -168,10 +224,16 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-async function start() {
+async function start(client = null) {
   try {
-    // Connect to database first
-    await database.connect();
+    // Store bot client reference
+    botClient = client;
+    
+    // If running standalone, connect to database
+    if (!client) {
+      logger.warn('⚠️ Starting web server in standalone mode (without bot connection)');
+      await database.connect();
+    }
     
     // Use PORT environment variable (for Railway/Heroku/etc) or fallback to config
     const port = process.env.PORT || config.web.port;
@@ -181,12 +243,22 @@ async function start() {
       logger.info(`🌐 Web dashboard running on ${config.web.url}`);
       logger.info(`📡 Server listening on ${host}:${port}`);
     });
+    
+    return app;
   } catch (error) {
     logger.error('Failed to start web server:', error);
-    process.exit(1);
+    throw error;
   }
 }
 
-start();
+// If running directly (not imported), start the server
+if (import.meta.url === `file://${process.argv[1]}`) {
+  start().catch(error => {
+    logger.error('Failed to start standalone web server:', error);
+    process.exit(1);
+  });
+}
 
+// Export the start function and app
+export { start, botClient };
 export default app;

@@ -7,7 +7,11 @@
     <div class="header-right">
         <div class="user-info">
             <% if (user) { %>
-                <img src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png" alt="User Avatar" class="user-avatar">
+                <% if (user.avatar) { %>
+                    <img src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png" alt="User Avatar" class="user-avatar">
+                <% } else { %>
+                    <img src="https://cdn.discordapp.com/embed/avatars/<%= parseInt(user.discriminator) % 5 %>.png" alt="User Avatar" class="user-avatar">
+                <% } %>
                 <span class="user-name"><%= user.username %></span>
             <% } %>
         </div>

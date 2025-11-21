@@ -12,6 +12,11 @@ async function loadStats() {
         const response = await fetch('/api/stats');
         const data = await response.json();
 
+        // Update bot status
+        if (data.bot) {
+            updateBotStatus(data.bot);
+        }
+
         // Update dashboard cards
         updateElement('support-count', data.support?.open || 0);
         updateElement('verification-count', 0); // Placeholder
@@ -25,6 +30,56 @@ async function loadStats() {
 
     } catch (error) {
         console.error('Error loading stats:', error);
+        updateBotStatus(null);
+    }
+}
+
+function updateBotStatus(botData) {
+    const statusDot = document.getElementById('bot-status-dot');
+    const statusText = document.getElementById('bot-status-text');
+    
+    if (!botData) {
+        if (statusDot) {
+            statusDot.style.color = '#e74c3c';
+            statusText.textContent = 'غير متصل';
+        }
+        updateElement('bot-uptime', '-');
+        updateElement('bot-guilds', '-');
+        updateElement('bot-users', '-');
+        updateElement('bot-ping', '-');
+        return;
+    }
+
+    // Update status indicator
+    if (statusDot && statusText) {
+        if (botData.status === 'online') {
+            statusDot.style.color = '#2ecc71';
+            statusText.textContent = 'متصل';
+        } else {
+            statusDot.style.color = '#e74c3c';
+            statusText.textContent = 'غير متصل';
+        }
+    }
+
+    // Update bot info
+    const uptime = formatUptime(botData.uptime || 0);
+    updateElement('bot-uptime', uptime);
+    updateElement('bot-guilds', botData.guilds || 0);
+    updateElement('bot-users', botData.users || 0);
+    updateElement('bot-ping', botData.ping ? `${botData.ping}ms` : '-');
+}
+
+function formatUptime(seconds) {
+    const days = Math.floor(seconds / 86400);
+    const hours = Math.floor((seconds % 86400) / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    
+    if (days > 0) {
+        return `${days} يوم ${hours} ساعة`;
+    } else if (hours > 0) {
+        return `${hours} ساعة ${minutes} دقيقة`;
+    } else {
+        return `${minutes} دقيقة`;
     }
 }
 
