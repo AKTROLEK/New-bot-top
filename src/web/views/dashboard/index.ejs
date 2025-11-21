@@ -15,6 +15,35 @@
         <div class="dashboard-content">
             <h1>🖥️ لوحة التحكم الرئيسية</h1>
             
+            <!-- Bot Status Card -->
+            <div class="dashboard-section">
+                <h2>🤖 حالة البوت</h2>
+                <div class="bot-status glass-effect">
+                    <div class="status-indicator">
+                        <span class="status-dot" id="bot-status-dot">●</span>
+                        <span id="bot-status-text">جاري التحميل...</span>
+                    </div>
+                    <div class="bot-info-grid">
+                        <div class="bot-info-item">
+                            <span class="info-label">وقت التشغيل:</span>
+                            <span class="info-value" id="bot-uptime">-</span>
+                        </div>
+                        <div class="bot-info-item">
+                            <span class="info-label">السيرفرات:</span>
+                            <span class="info-value" id="bot-guilds">-</span>
+                        </div>
+                        <div class="bot-info-item">
+                            <span class="info-label">المستخدمين:</span>
+                            <span class="info-value" id="bot-users">-</span>
+                        </div>
+                        <div class="bot-info-item">
+                            <span class="info-label">البينق:</span>
+                            <span class="info-value" id="bot-ping">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
             <div class="dashboard-grid">
                 <div class="dashboard-card glass-effect">
                     <div class="card-icon">📞</div>
